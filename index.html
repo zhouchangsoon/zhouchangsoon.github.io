@@ -96,96 +96,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/05/03/hello-world/" data-id="cj290c8ei0001bcafedgr6pbc" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-TCP报文段结构" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/05/01/TCP报文段结构/" class="article-date">
-  <time datetime="2017-05-01T13:33:26.000Z" itemprop="datePublished">2017-05-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/05/01/TCP报文段结构/">TCP报文段结构</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="TCP协议的特点"><a href="#TCP协议的特点" class="headerlink" title="TCP协议的特点"></a>TCP协议的特点</h1><p>TCP是可靠的、面向连接、面向字节流、支持双工（客户端和服务器端可以互相传输数据）、支持并发连接、提供确认重传与拥塞控制的传输层协议。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">添加补充知识：</div><div class="line">UDP是一种无连接、不可靠、简单高效的一种面向报文传输的传输层协议。</div></pre></td></tr></table></figure>
-<h1 id="TCP的报文段结构"><a href="#TCP的报文段结构" class="headerlink" title="TCP的报文段结构"></a>TCP的报文段结构</h1><p>TCP的报文段结构由报文首部和数据组成。其中报文段的首部的长度为：20字节~60字节。如下图所示，为TCP报文段的结构的展示图：<br><img src="http://i2.muimg.com/4851/fc96c5794f9ca199.png" alt="image"></p>
-<p>下面我们，一一介绍各个主要的部分的含义：</p>
-<ol>
-<li>序号</li>
-</ol>
-<p>序号这个字段的长度为：32比特字，它表示的是我们发送那个数据中，第一个字节的字节流编号。</p>
-<ol>
-<li>确认号</li>
-</ol>
-<p>因为TCP提供的是累积确认，它的意思就是：如果我们得到的确认号为100，那么它就代表编号为99之前的字节流都已经被正确的接收了，现在我们要继续接收以编号为100的字节开头的报文段了。同时该字段的长度为：32比特字</p>
-<ol>
-<li>首部长度</li>
-</ol>
-<p>该字段主要是为了记录当前报文首部的长度。在介绍TCP的时候，我们已经说了TCP的报文首部的长度的范围是从20字节~ 60字节，另外我们的首都的长度又是以4字节为单位的，因此我们可以知道这个字段的取值为：5~15。同时该字段的长度为：4比特字</p>
-<ol>
-<li>保留</li>
-</ol>
-<p>保留的字段的长度为：6比特字，它是留作以后使用</p>
-<ol>
-<li>标志字段</li>
-</ol>
-<p>标志字段的长度为：6比特字</p>
-<ul>
-<li>ACK用于指示确认字段中的值有效，对报文段成功接收的进行确认</li>
-<li>RST主要是用于服务器端向客户端发送特殊的重置报文，表示目的端口不可用</li>
-<li>FIN是用于断开TCP连接</li>
-<li>SYN是用于建立TCP连接</li>
-<li>URG用于指示报文段存在着被发送端上层程序置为“紧急”的数据，配合紧急数据指针使用</li>
-<li>PSH用于指示接收方立即将该数据交给上层</li>
-</ul>
-<p>其中PSH、URG和紧急数据指针在实践中并没有使用，可以不去了解。</p>
-<ol>
-<li>接收窗口</li>
-</ol>
-<p>接收窗口的长度为：16比特字。该窗口的大小是有发送端的接收缓存来决定的，它主要是用于流量控制和拥塞控制。窗口的值计算为：LastByteRcvd-LastByteRead&lt;=RcvBuffer。然后是：rwnd=RcvBuffer-[LastByteRcvd-LastByteRead]</p>
-<ol>
-<li>检验和</li>
-</ol>
-<p>字段的长度为：16比特字。功能是用于检验当前的报文段是否有数据错误或丢失，具体的计算将在后续介绍。</p>
-<ol>
-<li>选项</li>
-</ol>
-<p>长度是从0-40字节之间，用于发送方和接收方协商最大的报文段长度（MSS）或高速网络环境下做窗口调节因子使用。</p>
-<h1 id="知识点：MSS"><a href="#知识点：MSS" class="headerlink" title="知识点：MSS"></a>知识点：MSS</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>TCP协议中，我们把报文段数据部分的最大长度称为：MSS（最大段长度）。有个点需要注意的就是MSS的值不包括报文段的首部，同时其值和接收窗口无关。</p>
-<h2 id="MSS值的选择的考虑因素"><a href="#MSS值的选择的考虑因素" class="headerlink" title="MSS值的选择的考虑因素"></a>MSS值的选择的考虑因素</h2><ul>
-<li>协议开销：因为TCP报文段包括首部和数据两个部分，我们要让数据在整个报文段占有合理的比例</li>
-<li>IP分段：如果MSS较大的话，则会受到IP分组的限制，较长的报文段会被IP分段传输，这样会增加网络开销和传输出错的概率</li>
-<li>发送和接收缓存的限制：MSS的大小会直接影响发送和接收缓存的使用率</li>
-<li>MSS默认值：</li>
-</ul>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>通过上述部分的描述，我今天的对网络知识的学习也可以先到此为止。了解TCP报文段的结构是学习TCP的基础，我们的报文段最重要的部分就是：序号和确认号两个部分，它们是TCP可以提供可靠传输的基础。而接收窗口是TCP可以提供流量控制和拥塞控制的基础。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/05/01/TCP报文段结构/" data-id="cj290c8ed0000bcafzw6gv8a2" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/05/03/hello-world/" data-id="cj291glhn0000lkafx94fq43r" class="article-share-link">Share</a>
       
       
     </footer>
@@ -226,10 +137,6 @@
         
           <li>
             <a href="/2017/05/03/hello-world/">Hello World</a>
-          </li>
-        
-          <li>
-            <a href="/2017/05/01/TCP报文段结构/">TCP报文段结构</a>
           </li>
         
       </ul>
